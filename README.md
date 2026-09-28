@@ -8,6 +8,10 @@ Contains drug sensitivity data, including IC50 values, for various drugs tested 
 
 After downloading, place `GDSC2-DATASET.csv` in the same folder as the code
 
-**Other Kaggle files**
-`Cell-lines.xlsx`,`Compounds-annotation.csv`, `GDSC_DATASET.csv` are **not used** by this analysis, so you do not need them to reproduce the results
+**Other Kaggle files:**
+- `Compounds-annotation.csv`
+- `GDSC_DATASET.csv`
+- `Cell-lines.xlsx`
+
+These are **not used** by this analysis, so you do not need them to reproduce the results
 
