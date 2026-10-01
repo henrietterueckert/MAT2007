@@ -89,3 +89,34 @@ print(results[["drug", "n_blood", "n_solid", "diff", "diff_err"]].head(20))
 
 # intermediate check
 results.to_csv("all_drugs_blood_vs_solid.csv", index=False)
+
+# so is rapamycin exceptional? --
+target = compare_groups(df, "Rapamycin")
+
+rank = results.index[results["drug"] == "Rapamycin"][0] + 1
+median_diff = results["diff"].median()
+q25, q75 = results["diff"].quantile([0.25, 0.75])
+share_blood_more_sensitive = (results["diff"] < 0).mean()
+
+print(f"Rapamycin: difference = {target['diff']:.2f} +/- {target['diff_err']:.2f} ({target['sigma']:.1f} sigma)")
+print(f"All drugs: median difference = {median_diff:.2f}, middle 50% between {q25:.2f} and {q75:.2f}")
+print(f"Blood more sensitive for {share_blood_more_sensitive:.1%} of drugs")
+print(f"Rapamycin rank: {rank} of {len(results)}")
+
+# plotting
+
+def plot_all_drugs(results, drug_name, filename):
+    target_diff = results.loc[results["drug"] == drug_name, "diff"].iloc[0]
+    median_diff = results["diff"].median()
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.hist(results["diff"], bins=30, color="lightgray", edgecolor="black")
+    ax.axvline(median_diff, color="blue", linestyle="--", label=f"Median of all drugs ({median_diff:.2f})")
+    ax.axvline(target_diff, color="red", label=f"{drug_name} ({target_diff:.2f})")
+    ax.set_xlabel("Mean LN_IC50 difference (blood - solid)")
+    ax.set_ylabel("Number of drugs")
+    ax.set_title("Blood-solid sensitivity difference across all drugs")
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(filename, dpi=200)
+    plt.close(fig)
