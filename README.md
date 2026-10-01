@@ -29,4 +29,40 @@ The script performs all preprocessing automatically:
 Cancer types are grouped as **blood cancer** (DLBC, MM, LCML, ALL, LAML) or
 **solid tumour** (all other TCGA codes).
 
+## Rapamycin cell lines by cancer type
+| TCGA_DESC    | Cell lines | Group in analysis |
+|--------------|-----------:|-------------------|
+| UNCLASSIFIED | 177        | excluded          |
+| LUAD         | 62         | solid             |
+| SCLC         | 57         | solid             |
+| SKCM         | 54         | solid             |
+| BRCA         | 50         | solid             |
+| COREAD       | 43         | solid             |
+| HNSC         | 39         | solid             |
+| GBM          | 34         | solid             |
+| ESCA         | 34         | solid             |
+| OV           | 34         | solid             |
+| KIRC         | 32         | solid             |
+| DLBC         | 31         | blood             |
+| NB           | 30         | solid             |
+| PAAD         | 29         | solid             |
+| ALL          | 26         | blood             |
+| LAML         | 25         | blood             |
+| STAD         | 23         | solid             |
+| MESO         | 21         | solid             |
+| BLCA         | 18         | solid             |
+| MM           | 17         | blood             |
+| LGG          | 17         | solid             |
+| THCA         | 15         | solid             |
+| LIHC         | 15         | solid             |
+| CESC         | 14         | solid             |
+| LUSC         | 14         | solid             |
+| LCML         | 10         | blood             |
+| UCEC         | 9          | solid             |
+| PRAD         | 6          | solid             |
+| MB           | 4          | solid             |
+| CLL          | 2          | blood             |
+| ACC          | 1          | solid             |
+| OTHER        | 1          | excluded          |
+
 
