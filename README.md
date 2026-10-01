@@ -9,9 +9,11 @@ Contains drug sensitivity data, including IC50 values, for various drugs tested 
 After downloading, place `GDSC2-DATASET.csv` in the same folder as the code
 
 **Other Kaggle files:**
-- `Compounds-annotation.csv`
-- `GDSC_DATASET.csv`
-- `Cell-lines.xlsx`
+|Files        |
+|--------------|
+|`Compounds-annotation.csv`|
+|`GDSC_DATASET.csv`|
+|`Cell-lines.xlsx`|
 
 These are **not used** by this analysis, so you do not need them to reproduce the results
 
@@ -22,15 +24,14 @@ Not **manual** cleaning
 The script performs all preprocessing automatically:
 1. Keeps only rows where `DRUG_NAME == "Rapamycin"`.
 2. Removes rows with `TCGA_DESC == "UNCLASSIFIED"` or a missing cancer type.
-3. For the per-cancer-type summary and boxplot only, keeps cancer types with
-   at least 5 cell lines. The blood vs solid tumour test uses all remaining
-   Rapamycin measurements.
+4. Compare mean LN_IC50 (blood - solid) with uncertainty 
+5. Repeat for all drugs with at least 20 cell lines per group (286 drugs)
 
 Cancer types are grouped as **blood cancer** (DLBC, MM, LCML, ALL, LAML) or
 **solid tumour** (all other TCGA codes).
 
 ## Rapamycin cell lines by cancer type
-| TCGA_DESC    | Cell lines | Group in analysis |
+|  TCGA_DESC    | Cell lines | Group in analysis |
 |--------------|-----------:|-------------------|
 | UNCLASSIFIED | 177        | excluded          |
 | LUAD         | 62         | solid             |
