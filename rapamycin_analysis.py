@@ -90,7 +90,7 @@ print(results[["drug", "n_blood", "n_solid", "diff", "diff_err"]].head(20))
 # intermediate check
 results.to_csv("all_drugs_blood_vs_solid.csv", index=False)
 
-# so is rapamycin exceptional? --
+# so is rapamycin exceptional? 
 target = compare_groups(df, "Rapamycin")
 
 rank = results.index[results["drug"] == "Rapamycin"][0] + 1
