@@ -25,13 +25,34 @@ The follwing files are **not used** by this analysis, so you do not need them to
 
 Not **manual** cleaning
 The script performs all preprocessing automatically:
-1. Keeps only rows where `DRUG_NAME == "Rapamycin"`.
-2. Removes rows with `TCGA_DESC == "UNCLASSIFIED"` or a missing cancer type.
-4. Compare mean LN_IC50 (blood - solid) with uncertainty 
-5. Repeat for all drugs with at least 20 cell lines per group (286 drugs)
+1. Selects the rows for one drug (`DRUG_NAME`), starting with Rapamycin.
+2. Removes rows with `TCGA_DESC` equal to `UNCLASSIFIED` or `OTHER`, or with a missing cancer type.
+3. Averages repeated measurements so each cell line (`COSMIC_ID`) counts once (see note below).
+4. Compares mean LN_IC50 (blood - solid), with the standard error of the difference and a Welch t-test.
+5. Repeats steps 1-4 for every drug with at least 20 cell lines in each group (286 drugs).
 
-Cancer types are grouped as **blood cancer** (DLBC, MM, LCML, ALL, LAML) or
+Cancer types are grouped as **blood cancer** (DLBC, MM, LCML, ALL, LAML, CLL) or
 **solid tumour** (all other TCGA codes).
+
+**Note on cell line counts:** some drugs were screened twice in GDSC2 under different `DRUG_ID`s, so the same cell line would otherwise appear twice and make the results look more significant than they are. Averaging per cell line prevents this. Cell lines with no cancer type are also dropped at this step, which is why the analysis uses 655 solid tumour lines for Rapamycin rather than the 661 counted before cleaning.
+
+## How to run
+Requires Python 3 with `pandas`, `numpy`, `scipy` and `matplotlib`:
+
+```
+pip install pandas numpy scipy matplotlib
+```
+
+With `GDSC2-dataset.csv` in the same folder, run:
+
+```
+python rapamycin_analysis.py
+```
+
+The script prints the Rapamycin result and the comparison with all drugs, and creates:
+- `all_drugs_blood_vs_solid.csv`: results for every drug
+- `figure1_boxplot.png`: Rapamycin LN_IC50 for blood cancers vs solid tumours
+- `figure2_all_drugs.png`: blood - solid difference for all drugs, with Rapamycin marked
 
 ## Rapamycin cell lines by cancer type
 |  TCGA_DESC    | Cell lines | Group in analysis |
@@ -68,5 +89,3 @@ Cancer types are grouped as **blood cancer** (DLBC, MM, LCML, ALL, LAML) or
 | CLL          | 2          | blood             |
 | ACC          | 1          | solid             |
 | OTHER        | 1          | excluded          |
-
-
