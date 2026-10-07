@@ -105,6 +105,17 @@ print(f"Rapamycin rank: {rank} of {len(results)}")
 
 # plotting
 
+def plot_boxplot(df, drug_name, filename):
+    blood, solid = get_groups(df, drug_name)
+    fig, ax = plt.subplots(figsize=(5, 4))
+    ax.boxplot([blood, solid], tick_labels=["Blood cancers", "Solid tumours"])
+    ax.set_ylabel("LN_IC50")
+    ax.set_title(f"{drug_name} sensitivity by cancer group")
+    fig.tight_layout()
+    fig.savefig(filename, dpi=200)
+    plt.close(fig)
+
+plot_boxplot(df, "Rapamycin", "figure1_boxplot.png")
 def plot_all_drugs(results, drug_name, filename):
     target_diff = results.loc[results["drug"] == drug_name, "diff"].iloc[0]
     median_diff = results["diff"].median()
@@ -120,3 +131,6 @@ def plot_all_drugs(results, drug_name, filename):
     fig.tight_layout()
     fig.savefig(filename, dpi=200)
     plt.close(fig)
+
+plot_boxplot(df, "Rapamycin", "figure1_boxplot.png")
+plot_all_drugs(results, "Rapamycin", "figure2_all_drugs.png")
