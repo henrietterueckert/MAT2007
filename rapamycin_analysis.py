@@ -21,12 +21,13 @@ def load_data(path):  # Read the GDSC2 csv file
     return pd.read_csv(path)
 
 
-def get_groups(df, drug_name, blood_types=BLOOD_TYPES):  # Return the LN_IC50 values of blood and solid cell lines
-    sub = df[df["DRUG_NAME"] == drug_name]  # picks one drug name
-    sub = sub[~sub["TCGA_DESC"].isin(EXCLUDED_TYPES)]  # removes unclassified/other
-    is_blood = sub["TCGA_DESC"].isin(blood_types)  # blood cancer rows
-    return sub[is_blood]["LN_IC50"], sub[~is_blood]["LN_IC50"]  # blood cancers, solid tumours
-
+def get_groups(df, drug_name, blood_types=BLOOD_TYPES):
+    sub = df[df["DRUG_NAME"] == drug_name]
+    sub = sub[~sub["TCGA_DESC"].isin(EXCLUDED_TYPES)]
+    # one value per cell line (averages repeated screens of the same drug)
+    sub = sub.groupby(["COSMIC_ID", "TCGA_DESC"], as_index=False)["LN_IC50"].mean()
+    is_blood = sub["TCGA_DESC"].isin(blood_types)
+    return sub[is_blood]["LN_IC50"], sub[~is_blood]["LN_IC50"]
 
 # comparing the groups
 def compare_groups(df, drug_name, blood_types=BLOOD_TYPES, min_lines=10):
@@ -105,32 +106,45 @@ print(f"Rapamycin rank: {rank} of {len(results)}")
 
 # plotting
 
+# plotting
+
 def plot_boxplot(df, drug_name, filename):
     blood, solid = get_groups(df, drug_name)
+    rng = np.random.default_rng(0)  # fixed seed so the points land in the same place every run
+
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.boxplot([blood, solid], tick_labels=["Blood cancers", "Solid tumours"])
-    ax.set_ylabel("LN_IC50")
+    ax.boxplot([blood, solid],
+               tick_labels=[f"Blood cancers\n(n={len(blood)})", f"Solid tumours\n(n={len(solid)})"],
+               showfliers=False, widths=0.5, zorder=1)
+    # individual cell lines, spread out sideways so they don't overlap
+    for i, values in enumerate([blood, solid], start=1):
+        x = i + rng.uniform(-0.15, 0.15, len(values))
+        ax.scatter(x, values, s=6, alpha=0.35, color="tab:blue", zorder=2)
+    ax.set_ylabel("LN_IC50 (lower = more sensitive)")
     ax.set_title(f"{drug_name} sensitivity by cancer group")
     fig.tight_layout()
     fig.savefig(filename, dpi=200)
     plt.close(fig)
 
-plot_boxplot(df, "Rapamycin", "figure1_boxplot.png")
+
 def plot_all_drugs(results, drug_name, filename):
     target_diff = results.loc[results["drug"] == drug_name, "diff"].iloc[0]
     median_diff = results["diff"].median()
 
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(7, 4.5))
     ax.hist(results["diff"], bins=30, color="lightgray", edgecolor="black")
+    ax.axvline(0, color="black", linewidth=0.8, alpha=0.5, label="No difference (0)")
     ax.axvline(median_diff, color="blue", linestyle="--", label=f"Median of all drugs ({median_diff:.2f})")
     ax.axvline(target_diff, color="red", label=f"{drug_name} ({target_diff:.2f})")
-    ax.set_xlabel("Mean LN_IC50 difference (blood - solid)")
+    ax.set_xlabel("Mean LN_IC50 difference (blood - solid)\n(negative = blood cancers more sensitive)")
     ax.set_ylabel("Number of drugs")
-    ax.set_title("Blood-solid sensitivity difference across all drugs")
-    ax.legend()
+    ax.set_title(f"Blood-solid sensitivity difference across all {len(results)} drugs")
+    ax.set_ylim(0, ax.get_ylim()[1] * 1.25)  # extra space at the top so the legend doesn't cover bars
+    ax.legend(loc="upper left", fontsize=8)
     fig.tight_layout()
     fig.savefig(filename, dpi=200)
     plt.close(fig)
 
+# making the figures
 plot_boxplot(df, "Rapamycin", "figure1_boxplot.png")
 plot_all_drugs(results, "Rapamycin", "figure2_all_drugs.png")
