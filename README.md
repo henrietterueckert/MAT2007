@@ -17,7 +17,7 @@ The follwing files are **not used** by this analysis, so you do not need them to
 |--------------|--------------|
 |`Compounds-annotation.csv`|This repository|
 |`GDSC_DATASET.csv`|Kaggle: https://www.kaggle.com/datasets/samiraalipour/genomics-of-drug-sensitivity-in-cancer-gdsc |
-|`Cell-lines.xlsx`|This repository|
+|`Cell-lines.xlsx`|This repository (not read by the script, but used to justify the blood vs solid grouping, see below)|
 
 
 ## Cleaning
@@ -33,6 +33,20 @@ The script performs all preprocessing automatically:
 
 Cancer types are grouped as **blood cancer** (DLBC, MM, LCML, ALL, LAML, CLL) or
 **solid tumour** (all other TCGA codes).
+
+### What the TCGA codes are
+`TCGA_DESC` is GDSC's "Cancer Type (matching TCGA label)". The Cancer Genome Atlas (TCGA) was a large NCI/NHGRI programme that profiled over 11,000 patient tumours across 33 cancer types and gave each type a short code (e.g. BRCA = breast invasive carcinoma, LAML = acute myeloid leukaemia). GDSC uses these codes to label each cell line with the patient cancer type it best matches (Iorio et al., 2016). Cell lines that do not match any TCGA type are labelled `UNCLASSIFIED`.
+
+### How the blood vs solid grouping was decided
+The grouping follows GDSC's own cell line annotation in `Cell-lines.xlsx` (GDSC's Cell_Lines_Details file):
+- **Decode sheet:** the GDSC definitions of the TCGA labels. ALL (acute lymphoblastic leukaemia), CLL (chronic lymphocytic leukaemia), DLBC (diffuse large B-cell lymphoma), LAML (acute myeloid leukaemia), LCML (chronic myelogenous leukaemia) and MM (multiple myeloma) are the only haematological cancers; all other labels are solid tumours (carcinomas, gliomas, melanoma, neuroblastoma, etc.).
+- **COSMIC tissue classification sheet:** every cell line with one of these six labels has the COSMIC site `haematopoietic_and_lymphoid_tissue`, and no cell line with any other label does.
+- **GDSC Tissue descriptor 1:** these six labels fall only under `leukemia`, `lymphoma` or `myeloma`.
+
+Lymphoma (DLBC) and myeloma (MM) are included as blood cancers because they are haematological malignancies (cancers of the blood-forming and lymphoid tissues), even though they are not leukaemias.
+
+### Limitation: blood cancer lines without a TCGA label
+`Cell-lines.xlsx` lists 53 haematopoietic/lymphoid cell lines with **no** TCGA label (e.g. Burkitt lymphoma, Hodgkin lymphoma, B-cell leukaemia, hairy cell leukaemia, anaplastic large cell lymphoma). About 50 of these have Rapamycin data in GDSC2 but are labelled `UNCLASSIFIED` and therefore excluded. The blood cancer group in this analysis therefore covers only TCGA-labelled blood cancer lines, not all blood cancer lines in GDSC2.
 
 **Note on cell line counts:** some drugs were screened twice in GDSC2 under different `DRUG_ID`s, so the same cell line would otherwise appear twice and make the results look more significant than they are. Averaging per cell line prevents this. Cell lines with no cancer type are also dropped at this step, which is why the analysis uses 655 solid tumour lines for Rapamycin rather than the 661 counted before cleaning.
 
@@ -89,3 +103,8 @@ The script prints the Rapamycin result and the comparison with all drugs, and cr
 | CLL          | 2          | blood             |
 | ACC          | 1          | solid             |
 | OTHER        | 1          | excluded          |
+
+## References
+- Iorio, F. et al. (2016). A Landscape of Pharmacogenomic Interactions in Cancer. *Cell*, 166(3), 740–754. https://doi.org/10.1016/j.cell.2016.06.017
+- The Cancer Genome Atlas Research Network et al. (2013). The Cancer Genome Atlas Pan-Cancer analysis project. *Nature Genetics*, 45, 1113–1120. https://doi.org/10.1038/ng.2764
+- Genomics of Drug Sensitivity in Cancer (GDSC): TCGA label definitions, https://www.cancerrxgene.org/faq
