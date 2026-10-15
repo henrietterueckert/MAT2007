@@ -94,7 +94,7 @@ results.to_csv("all_drugs_blood_vs_solid.csv", index=False)
 # so is rapamycin exceptional? 
 target = compare_groups(df, "Rapamycin")
 
-rank = results.index[results["drug"] == "Rapamycin"][0] + 1
+rank = results.index[results["drug"] == "Rapamycin"][0] + 1 # ranking
 median_diff = results["diff"].median()
 q25, q75 = results["diff"].quantile([0.25, 0.75])
 share_blood_more_sensitive = (results["diff"] < 0).mean()
@@ -103,8 +103,6 @@ print(f"Rapamycin: difference = {target['diff']:.2f} +/- {target['diff_err']:.2f
 print(f"All drugs: median difference = {median_diff:.2f}, middle 50% between {q25:.2f} and {q75:.2f}")
 print(f"Blood more sensitive for {share_blood_more_sensitive:.1%} of drugs")
 print(f"Rapamycin rank: {rank} of {len(results)}")
-
-# plotting
 
 # plotting
 
