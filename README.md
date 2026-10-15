@@ -34,7 +34,7 @@ No manual cleaning as the script performs all preprocessing automatically:
 
 **How the blood vs solid grouping was decided:** Cancer types are grouped as blood cancer (DLBC, MM, LCML, ALL, LAML, CLL) or solid tumour (all other TCGA codes). The Cancer Genome Atlas (TCGA) was a large programme that looked at over 11,000 patient tumours across 33 cancer types and gave each type a short code. GDSC uses these codes to label each cell line with the patient cancer type it best matches. Cell lines that do not match any TCGA type are labelled `UNCLASSIFIED`. The grouping followed GDSC's cell line annotation in `Cell-lines.xlsx`.
 
-In the Decode sheet these six codes are the only blood cancers, and in the "GDSC Tissue descriptor 1" column they are all listed under leukemia, lymphoma or myeloma. Lymphoma (DLBC) and myeloma (MM) are not leukaemias, but they are still cancers of the blood and lymphoid tissue, so they were included.
+In the decode sheet these six codes are the only blood cancers, and in the "GDSC Tissue descriptor 1" column they are all listed under leukemia, lymphoma or myeloma. Lymphoma (DLBC) and myeloma (MM) are not leukaemias, but they are still cancers of the blood and lymphoid tissue, so they were included.
 
 
 ### Limitation: blood cancer lines without a TCGA label
